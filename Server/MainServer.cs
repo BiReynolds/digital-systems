@@ -1,20 +1,19 @@
 using System.Net;
 using System.Text;
+using PageService1;
 
 namespace Server
 {
     public class MainServer
     {
-        bool Running = false;
         readonly static string Url = "http://localhost:8000/";
         readonly static HttpListener Listener = new();
-        public MainServer()
-        {
-            Init();
-        }
+        bool Running = false;
+        readonly IPageService PageService;
 
-        private void Init()
+        public MainServer(string pagesFolder)
         {
+            PageService = new PageService(pagesFolder);
             Listener.Prefixes.Add(Url);
         }
 
@@ -37,7 +36,9 @@ namespace Server
                 HttpListenerRequest request = ctx.Request;
                 // get response info from request info
                 Console.WriteLine($"Request: {request.Url}");
-                byte[] data = Encoding.UTF8.GetBytes("test");
+                PageInfo pageInfo = new("index.html");
+                string htmlString = PageService.GetPageString(pageInfo);
+                byte[] data = Encoding.UTF8.GetBytes(htmlString);
                 // make response
                 HttpListenerResponse response = ctx.Response;
                 response.ContentType = "text/html";

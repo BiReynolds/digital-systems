@@ -4,7 +4,7 @@ public static class Program
 {
     public static void Main()
     {
-        MainServer server = new();
+        MainServer server = new("./Pages");
         server.StartServer();
     }
 }
