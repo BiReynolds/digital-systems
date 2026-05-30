@@ -2,6 +2,6 @@ namespace Server
 {
     public interface IPageService
     {
-        public string GetPageString(PageInfo pageInfo);
+        public string GetRequestedData(RequestInfo RequestInfo);
     }
 }

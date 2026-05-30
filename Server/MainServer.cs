@@ -38,19 +38,33 @@ namespace Server
                 HttpListenerContext ctx = await Listener.GetContextAsync();
                 // get request info from context
                 HttpListenerRequest request = ctx.Request;
+                Console.WriteLine($"Request Received: \n {request.RawUrl}");
                 // get page info
-                PageInfo pageInfo = Router.GetPageInfoFromRawUrl(request.RawUrl ?? "");
+                RequestInfo RequestInfo = Router.GetRequestInfoFromUrl(request.RawUrl ?? "");
                 // get rawHTML as byte[]
-                string htmlString = PageService.GetPageString(pageInfo);
+                string htmlString = PageService.GetRequestedData(RequestInfo);
                 byte[] buffer = Encoding.UTF8.GetBytes(htmlString);
                 // make response
                 HttpListenerResponse response = ctx.Response;
-                response.ContentType = "text/html";
+                response.ContentType = GetContentTypeFromRequestType(RequestInfo.RequestType);
                 response.ContentEncoding = Encoding.UTF8;
                 response.ContentLength64 = buffer.LongLength;
                 // send it
                 await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
                 response.Close();
+            }
+        }
+
+        public string GetContentTypeFromRequestType(RequestType requestType)
+        {
+            switch (requestType)
+            {
+                case RequestType.SCRIPT:
+                    return "text/javascript";
+                case RequestType.STYLE:
+                    return "text/css";
+                default:
+                    return "text/html";
             }
         }
     }

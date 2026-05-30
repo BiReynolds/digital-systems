@@ -2,6 +2,6 @@ namespace Server
 {
     public interface IRouter
     {
-        public PageInfo GetPageInfoFromRawUrl(string url);
+        public RequestInfo GetRequestInfoFromUrl(string url);
     }
 }

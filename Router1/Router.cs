@@ -4,22 +4,31 @@ namespace Router1
 {
     public class Router : IRouter
     {
-        private Dictionary<string, PageInfo> RouteMap = new()
+        private Dictionary<string, RequestInfo> RouteMap = new()
         {
-            {"/", new PageInfo("index.html")},
-            {"/index", new PageInfo("index.html")},
-            {"/test", new PageInfo("test.html")}
+            {"/", new RequestInfo("index.html", RequestType.PAGE)},
+            {"/index", new RequestInfo("index.html", RequestType.PAGE)},
+            {"/test", new RequestInfo("test.html", RequestType.PAGE)}
         };
         public Router() { }
 
-        public PageInfo GetPageInfoFromRawUrl(string url)
+        public RequestInfo GetRequestInfoFromUrl(string url)
         {
-            return RouteMap[url];
+            string requestExtension = RequestHelper.GetExtension(url);
+            switch(requestExtension)
+            {
+                case "js":
+                    return new RequestInfo(url, RequestType.SCRIPT);
+                case "css":
+                    return new RequestInfo(url, RequestType.STYLE);
+                default:
+                    return RouteMap[url];
+            }
         }
 
-        public void AddRoute(string url, PageInfo pageInfo)
+        public void AddRoute(string url, RequestInfo RequestInfo)
         {
-            RouteMap[url] = pageInfo;
+            RouteMap[url] = RequestInfo;
         }
     }
 }

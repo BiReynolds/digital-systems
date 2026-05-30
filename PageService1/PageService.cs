@@ -14,33 +14,49 @@ namespace PageService1
             StylesFolder = stylesFolder;
         }
 
-        public string GetPageString(PageInfo pageInfo)
+        public string GetRequestedData(RequestInfo requestInfo)
+        {
+            switch (requestInfo.RequestType)
+            {
+                case RequestType.SCRIPT:
+                    return GetScriptString(requestInfo);
+                case RequestType.STYLE:
+                    return GetStyleString(requestInfo);
+                default:
+                    return GetPageString(requestInfo);
+            }
+        }
+
+        string GetPageString(RequestInfo requestInfo)
         {
             string result;
-            using (StreamReader reader = new(Path.Join(PagesFolder, pageInfo.PageTemplateFile)))
+            using (StreamReader reader = new(Path.Join(PagesFolder, requestInfo.RequestString)))
             {
                 result = reader.ReadToEnd();
             }
             return result;
         }
 
-        public string GetScriptString(string requestUrl)
+        string GetScriptString(RequestInfo requestInfo)
         {
             string result;
-            using (StreamReader reader = new(Path.Join(ScriptsFolder, requestUrl)))
+            using (StreamReader reader = new(Path.Join(ScriptsFolder, requestInfo.RequestString)))
             {
                 result = reader.ReadToEnd();
             }
             return result;
         }
-        public string GetStyleString(string requestUrl)
+
+        string GetStyleString(RequestInfo requestInfo)
         {
             string result;
-            using (StreamReader reader = new(Path.Join(StylesFolder, requestUrl)))
+            using (StreamReader reader = new(Path.Join(StylesFolder, requestInfo.RequestString)))
             {
                 result = reader.ReadToEnd();
             }
             return result;
         }
+
+        
     }
 }
